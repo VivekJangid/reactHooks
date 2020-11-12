@@ -4,7 +4,7 @@ import axios from "axios";
 const Search = () => {
   const [term, setTerm] = useState("");
   const [results, setResults] = useState([]);
-
+  const [debouncedTerm, setDebouncedTerm] = useState(term);
   //   useEffect(() => {
   //     console.log("I Only Run Once");
   //   }, []);
@@ -16,6 +16,16 @@ const Search = () => {
   //   }, [term]);
   //   console.log("Runs on every Re Render");
   useEffect(() => {
+    const timerId = setTimeout(() => {
+      setDebouncedTerm(term);
+    }, 1000);
+
+    return () => {
+      clearTimeout(timerId);
+    };
+  }, [term]);
+
+  useEffect(() => {
     const searchWiki = async () => {
       const { data } = await axios.get("https://en.wikipedia.org/w/api.php", {
         params: {
@@ -23,22 +33,14 @@ const Search = () => {
           list: "search",
           origin: "*",
           format: "json",
-          srsearch: term,
+          srsearch: debouncedTerm,
         },
       });
       setResults(data.query.search);
     };
 
-    const timeoutId = setTimeout(() => {
-      if (term) {
-        searchWiki();
-      }
-    }, 300);
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [term]);
+    searchWiki();
+  }, [debouncedTerm]);
 
   const renderedList = results.map((result) => {
     return (
@@ -48,7 +50,7 @@ const Search = () => {
             className="ui button"
             href={`https://en.wikipedia.org?curid=${result.pageid}`}
           >
-            Go To Page
+            Go
           </a>
         </div>
         <div className="content">
