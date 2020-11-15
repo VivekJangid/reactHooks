@@ -6,6 +6,7 @@ const Accordion = ({ items }) => {
   const onTitleClick = (index) => {
     setActiveIndex(index);
   };
+
   const renderedItems = items.map((item, index) => {
     const active = index === activeIndex ? "active" : "";
 

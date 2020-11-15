@@ -36,7 +36,9 @@ const Search = () => {
           srsearch: debouncedTerm,
         },
       });
-      setResults(data.query.search);
+      if (debouncedTerm !== "") {
+        setResults(data.query.search);
+      }
     };
 
     searchWiki();
